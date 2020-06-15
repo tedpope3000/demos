@@ -1,0 +1,53 @@
+-- People I've known longest
+
+SELECT contact_name, known_since
+FROM background
+ORDER BY known_since;
+
+-- What area code most contacts come from
+
+SELECT COUNT(*), area_code
+FROM info
+GROUP BY area_code
+ORDER BY COUNT(*) DESC;
+
+
+-- People I've known the longest in New Orleans
+
+SELECT b.contact_name, known_since, city
+FROM background b JOIN info i
+	ON b.contact_name = i.contact_name
+WHERE city = 'New Orleans'
+ORDER BY known_since;
+
+-- Who texts the most
+
+SELECT contact_name, most_recent_contact, text_count
+FROM contact JOIN history
+    ON contact.contact1 = history.contact1
+ORDER BY history.text_count DESC;
+
+-- Who do I hear from the most out of everyone I know from high school?
+
+SELECT c.contact_name, know_from, (text_count + call_count) AS total_contact
+FROM contact c JOIN background b
+	ON c.contact_name = b.contact_name
+	JOIN history h
+	ON c.contact1 = h.contact1
+WHERE know_from = 'Holy Angels'
+ORDER BY (text_count + call_count) DESC;
+
+-- Which women in Chicago do I talk to on the phone the most?
+
+SELECT c.contact_name, call_count
+FROM contact c JOIN bio b
+	ON c.contact_name = b.contact_name
+	JOIN history h
+	ON c.contact1 = h.contact1
+	JOIN info i
+	ON c.contact_name = i.contact_name
+WHERE city = 'Chicago' AND gender = 'F'
+ORDER BY call_count DESC
+FETCH FIRST 2 ROWS ONLY;
+
+-- The results are my mom and sister.
